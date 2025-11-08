@@ -1,6 +1,7 @@
 package main
 
 import (
+	"api-people-go/config"
 	"api-people-go/database"
 	"api-people-go/handler"
 	"api-people-go/repository"
@@ -11,8 +12,14 @@ import (
 
 func main() {
 
+	// 0. Configuração
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// 1. Conexão de dados
-	db, err := database.Connect()
+	db, err := database.Connect(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -27,7 +34,7 @@ func main() {
 	mux := router.NewRouter(pessoaHandler)
 
 	// 4. Iniciar o servidor com o 'mux' personalizado
-	srv := server.NewServer(":8080", mux)
+	srv := server.NewServer(cfg, mux)
 
 	if err := srv.Run(); err != nil {
 		log.Fatal(err)

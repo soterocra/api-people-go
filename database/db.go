@@ -1,10 +1,10 @@
 package database
 
 import (
+	"api-people-go/config"
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
 
 	_ "github.com/go-sql-driver/mysql" // O driver é necessário aqui
 	"github.com/joho/godotenv"
@@ -12,7 +12,7 @@ import (
 
 // Connect será nossa função "public" (dado que começa com maiúscula)
 // Ela retorna o "pool" de conexões (*sql.DB) ou um erro.
-func Connect() (*sql.DB, error) {
+func Connect(cfg config.Config) (*sql.DB, error) {
 
 	// 1. Carregar o arquivo .env
 	err := godotenv.Load()
@@ -20,22 +20,12 @@ func Connect() (*sql.DB, error) {
 		log.Println("Aviso: Erro ao carregar arquivo .env")
 	}
 
-	dbName := os.Getenv("DB_NAME")
-	dbUser := os.Getenv("DB_USER")
-	dbPass := os.Getenv("DB_PASS")
-
-	if dbName == "" {
-		dbName = "empty"
-	}
-	if dbUser == "" {
-		dbUser = "empty"
-	}
-	if dbPass == "" {
-		dbPass = "empty"
-	}
-
 	// 2. Construir DSN
-	dsn := fmt.Sprintf("%s:%s@tcp(localhost:3306)/%s", dbUser, dbPass, dbName)
+	dsn := fmt.Sprintf("%s:%s@tcp(localhost:3306)/%s",
+		cfg.DBUser,
+		cfg.DBPass,
+		cfg.DBName,
+	)
 
 	// 3. Abrir conexão
 	db, err := sql.Open("mysql", dsn)
