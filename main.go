@@ -7,6 +7,7 @@ import (
 	"api-people-go/repository"
 	"api-people-go/router"
 	"api-people-go/server"
+	"api-people-go/service"
 	"log"
 )
 
@@ -28,7 +29,8 @@ func main() {
 
 	// 2. Injeção de dependência "O LEGO"
 	pessoaRepo := repository.NewPessoaRepository(db)
-	pessoaHandler := handler.NewPessoaHandler(pessoaRepo)
+	pessoaService := service.NewPessoaService(pessoaRepo)
+	pessoaHandler := handler.NewPessoaHandler(pessoaService)
 
 	// 3. Camanda de Roteamento HTTP. Fábrica de rotas
 	mux := router.NewRouter(pessoaHandler)

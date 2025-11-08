@@ -2,7 +2,7 @@ package handler
 
 import (
 	"api-people-go/domain"
-	"api-people-go/repository"
+	"api-people-go/service"
 	"encoding/json"
 	"net/http"
 )
@@ -10,13 +10,13 @@ import (
 // É na struct que se "guarda" as dependências
 type PessoaHandler struct {
 	// Esse é o "D" do SOLID (Inversão de Dependência), em Java seria o "@Autowired private PessoaRepository repo;"
-	repo repository.PessoaRepository
+	service service.PessoaService
 }
 
 // Factory (Construtor)
-func NewPessoaHandler(repo repository.PessoaRepository) *PessoaHandler {
+func NewPessoaHandler(service service.PessoaService) *PessoaHandler {
 	return &PessoaHandler{
-		repo: repo,
+		service: service,
 	}
 }
 
@@ -36,7 +36,7 @@ func (h *PessoaHandler) CreatePessoa(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// O Handler não sabe SQL, ele apenas invoca o repositório. Em java seria "Pessoa novaPessoa = this.repo.save(p)"
-	novaPessoa, err := h.repo.Create(p)
+	novaPessoa, err := h.service.Create(p)
 	if err != nil {
 		http.Error(w, "Erro ao criar pessoa: "+err.Error(), http.StatusInternalServerError)
 	}
