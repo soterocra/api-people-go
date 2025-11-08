@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # Serviço 1: O Banco de Dados MySQL
+  db:
+    image: mysql:8.0
+    container_name: api-people-go-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+      MYSQL_DATABASE: ${DB_NAME}
+    ports:
+      # Expõe a porta 3306 para o seu 'localhost' (para o Go acessar)
+      - "3306:3306"
+    volumes:
+      # Garante que os dados do banco persistam se o container reiniciar
+      - mysql_data:/var/lib/mysql
+
+  # Serviço 2: O Administrador (phpMyAdmin)
+  admin:
+    image: phpmyadmin/phpmyadmin
+    container_name: api-people-phpmyadmin
+    restart: always
+    environment:
+      # O phpMyAdmin vai se conectar ao 'db' (o nome do serviço acima)
+      PMA_HOST: db
+      PMA_PORT: 3306
+    ports:
+      # Expõe o phpMyAdmin na porta 8081 (para não conflitar com nossa API)
+      - "8081:80"
+    depends_on:
+      - db # Garante que o 'db' inicie antes do 'admin'
+
+# Define o volume que usamos no serviço 'db'
+volumes:
+  mysql_data:
