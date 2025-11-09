@@ -29,7 +29,7 @@ go mod why filippo.io/edwards25519
 ```
 
 
-Comando usado para limpar e organizar o `go.mod`:
+Comando usado para limpar e organizar o `go.mod` e instalar as dependências:
 
 ```shell
 go mod tidy
