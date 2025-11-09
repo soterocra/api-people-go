@@ -35,6 +35,12 @@ Comando usado para limpar e organizar o `go.mod` e instalar as dependências:
 go mod tidy
 ```
 
+Executar testes em todos os diretórios e sub-diretórios a partir da raiz:
+
+```shell
+go test ./...
+```
+
 `Create` da tabela:
 
 ```sql
