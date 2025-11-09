@@ -14,7 +14,10 @@ func NewRouter(pessoaHandler *handler.PessoaHandler) *http.ServeMux {
 	mux := http.NewServeMux()
 
 	// 2. Registramos as rotas nele (mux.HandleFunc, não http.HandleFunc)
-	mux.HandleFunc("/pessoas", pessoaHandler.CreatePessoa)
+	mux.HandleFunc("POST /pessoas", pessoaHandler.CreatePessoa)
+
+	// {id} é o parâmetro
+	mux.HandleFunc("GET /pessoas/{id}", pessoaHandler.GetPessoaByID)
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "API de Pessoas v2 (Com Roteador separado!)")

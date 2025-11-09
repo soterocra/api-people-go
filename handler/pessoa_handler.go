@@ -3,8 +3,12 @@ package handler
 import (
 	"api-people-go/domain"
 	"api-people-go/service"
+	"database/sql"
 	"encoding/json"
+	"errors"
+	"log"
 	"net/http"
+	"strconv"
 )
 
 // É na struct que se "guarda" as dependências
@@ -44,5 +48,45 @@ func (h *PessoaHandler) CreatePessoa(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated) // 201
 	json.NewEncoder(w).Encode(novaPessoa)
+
+}
+
+func (h *PessoaHandler) handleError(w http.ResponseWriter, r *http.Request, err error) {
+	log.Printf("ERRO: %s %s -> %v", r.Method, r.URL.Path, err)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		http.Error(w, "Recurso não encontrado", http.StatusNotFound)
+		return
+	}
+
+	// Aqui pode-se checar outros erros
+
+	// Erro padrão (catch-all)
+	http.Error(w, "Erro interno do servidor", http.StatusInternalServerError)
+
+}
+
+func (h *PessoaHandler) GetPessoaByID(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Método não permitido", http.StatusMethodNotAllowed)
+		return
+	}
+
+	idStr := r.PathValue("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "ID inválido", http.StatusBadRequest)
+		return
+	}
+
+	pessoa, err := h.service.FindByID(id)
+	if err != nil {
+		h.handleError(w, r, err) // Usando o helper de erros.
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(pessoa)
 
 }

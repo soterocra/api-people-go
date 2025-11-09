@@ -9,6 +9,7 @@ import (
 // A interface, define o que o serviço faz (contrato)
 type PessoaService interface {
 	Create(pessoa domain.Pessoa) (domain.Pessoa, error)
+	FindByID(id int) (domain.Pessoa, error)
 }
 
 // A struct, a implementação. Letra minúscula por ser "privada".
@@ -32,4 +33,8 @@ func (s *pessoaService) Create(pessoa domain.Pessoa) (domain.Pessoa, error) {
 	}
 
 	return s.repo.Create(pessoa)
+}
+
+func (s *pessoaService) FindByID(id int) (domain.Pessoa, error) {
+	return s.repo.FindByID(id)
 }
